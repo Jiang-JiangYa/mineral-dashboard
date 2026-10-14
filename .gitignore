@@ -30,8 +30,10 @@ temp/
 *.swo
 *~
 
-# Deployment packages (dist/ contains tracked webpage source)
+# Generated build output and deployment packages
+dist/
 site.tar.gz
+vue-preview.png
 
 # Local secrets; keep shareable environment templates
 .env
@@ -47,4 +49,4 @@ Desktop.ini
 .idea/
 .vscode/
 
-# Keep dist/ and .openai/hosting.json tracked for Sites publication.
+# Keep src/ and .openai/hosting.json tracked for Sites publication.
