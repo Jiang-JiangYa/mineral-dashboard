@@ -1,0 +1,182 @@
+[
+  {
+    "id": "qa-01",
+    "question": "澳大利亚关键矿产战略希望建设怎样的供应链？",
+    "answer": "多元、有韧性和可持续",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/vision-and-objectives"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-02",
+    "question": "澳洲关键矿产战略对本国加工能力有何目标？",
+    "answer": "提升本国关键矿产加工能力",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/vision-and-objectives"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-03",
+    "question": "澳洲如何降低战略重要矿产项目的风险？",
+    "answer": "有针对性、适度的政府支持",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/1-developing-strategically-important-projects"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-04",
+    "question": "澳大利亚重要矿产项目支持希望吸引哪类融资？",
+    "answer": "私人融资",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/1-developing-strategically-important-projects"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-05",
+    "question": "澳洲关键矿产国际合作关注哪类伙伴？",
+    "answer": "志同道合的国际伙伴",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/2-attracting-investment-and-building-international-partnerships"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-06",
+    "question": "澳大利亚关键矿产国际投资合作如何支持下游？",
+    "answer": "发展下游加工能力",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/2-attracting-investment-and-building-international-partnerships"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-07",
+    "question": "澳大利亚关键矿产战略怎样对待原住民社区？",
+    "answer": "实质性的参与和合作",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/3-first-nations-engagement-and-benefit-sharing"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-08",
+    "question": "澳洲关键矿产原住民利益分享需要尊重哪些权利？",
+    "answer": "土地和水资源",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/3-first-nations-engagement-and-benefit-sharing"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-09",
+    "question": "澳洲关键矿产战略如何平衡环境审批与保护？",
+    "answer": "同时维持严格的环境保护要求",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/4-promoting-australia-world-leader-esg-performance"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-10",
+    "question": "澳大利亚关键矿产战略中的ESG指哪些方面？",
+    "answer": "环境、社会和治理",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/4-promoting-australia-world-leader-esg-performance"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-11",
+    "question": "澳洲关键矿产配套基础设施如何帮助工业枢纽？",
+    "answer": "发展工业枢纽、连接国内外市场",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/5-unlocking-investment-enabling-infrastructure-and-services"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-12",
+    "question": "澳大利亚关键矿产基础设施投资对成本风险有何作用？",
+    "answer": "降低成本和项目风险",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/5-unlocking-investment-enabling-infrastructure-and-services"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-13",
+    "question": "澳洲关键矿产战略需要怎样的劳动力队伍？",
+    "answer": "技能充分、多元且持续壮大",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/6-growing-skilled-workforce"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-14",
+    "question": "澳大利亚关键矿产技能人才为何要适应下游加工？",
+    "answer": "满足向下游加工拓展时的人才需求",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-focus-areas/6-growing-skilled-workforce"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-15",
+    "question": "澳洲政府支持关键矿产采取怎样的实施方式？",
+    "answer": "协调一致、有针对性且适度",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-approach"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-16",
+    "question": "澳大利亚关键矿产战略实施需要哪些主体合作？",
+    "answer": "政府与行业",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/our-approach"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-17",
+    "question": "澳洲关键矿产战略运行环境章节解释什么？",
+    "answer": "关键矿产是什么、它们为何重要",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/operating-environment"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-18",
+    "question": "澳大利亚关键矿产战略哪个章节介绍全球背景？",
+    "answer": "运行环境",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/operating-environment"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-19",
+    "question": "澳洲关键矿产供应链机遇需要谁共同努力？",
+    "answer": "政府、社区和行业",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/opportunities-australia"
+    ],
+    "scope": "historical_reference"
+  },
+  {
+    "id": "qa-20",
+    "question": "澳大利亚关键矿产机遇章节提出怎样的供应链方向？",
+    "answer": "多元、有韧性和可持续",
+    "gold_urls": [
+      "https://www.industry.gov.au/publications/critical-minerals-strategy-2023-2030/opportunities-australia"
+    ],
+    "scope": "historical_reference"
+  }
+]

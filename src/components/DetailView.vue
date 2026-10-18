@@ -1,35 +1,42 @@
 <script setup>
-import { documents, prices } from '../data/demo.js'
-defineProps({ view: { type: String, required: true }, record: { type: Object, default: null } })
-defineEmits(['open', 'back'])
+import SourcesPanel from './SourcesPanel.vue'
+import PriceChart from './PriceChart.vue'
+defineProps({ view: { type: String, required: true }, record: { type: Object, default: null }, documents: { type: Array, default: () => [] }, prices: { type: Array, default: () => [] }, overview: { type: Object, default: () => ({}) }, runs: { type: Array, default: () => [] }, acting: Boolean, message: String })
+defineEmits(['open', 'back', 'collect', 'evaluate'])
+const percent = value => value == null ? '未评估' : (value * 100).toFixed(1) + '%'
 </script>
-
 <template>
   <section id="detail">
-    <div v-if="record" class="panel">
+    <div v-if="record" class="panel document-detail">
       <button class="outline" @click="$emit('back')">← 返回列表</button>
-      <p><span class="tag" :class="record.type">{{ record.mineral }} · 示例</span></p>
-      <h1>{{ record.title }}</h1><p>{{ record.source }}　|　{{ record.date }}</p><p>{{ record.text }}</p>
-      <p>这不是经过采集验证的真实新闻或政策，不能作为研究结论的依据。</p>
-      <a v-if="record.url" :href="record.url" target="_blank" rel="noopener">访问来源首页 ↗</a><p v-else>演示记录未配置来源链接。</p>
+      <p><span class="tag" :class="record.type">{{ record.mineral || '综合矿产' }} · {{ record.is_reference ? '历史参考摘要' : '采集记录' }}</span></p>
+      <h1>{{ record.title }}</h1><p>{{ record.source }}　|　{{ record.date }}</p><p class="document-text">{{ record.text }}</p>
+      <a v-if="record.url" :href="record.url" target="_blank" rel="noopener noreferrer">查看原始来源 ↗</a>
     </div>
     <section v-else-if="view === 'news' || view === 'policy'" class="panel">
       <article v-for="document in documents.filter(item => item.type === view)" :key="document.id" class="item" role="button" tabindex="0" @click="$emit('open', document)" @keydown.enter="$emit('open', document)" @keydown.space.prevent="$emit('open', document)">
-        <div class="meta">{{ document.source }} · {{ document.date }} · 示例</div><h3>{{ document.title }}</h3><p>{{ document.text }}</p>
-      </article>
+        <div class="meta">{{ document.source }} · {{ document.date }} · {{ document.is_reference ? '历史参考摘要' : '采集文档' }}</div><h3>{{ document.title }}</h3><p>{{ document.text.slice(0, 180) }}…</p>
+      </article><p v-if="!documents.some(item => item.type === view)">暂无此类文档，请先运行采集或导入。</p>
     </section>
-    <section v-else-if="view === 'prices'" class="panel">
-      <h2>市场价格 · 示例</h2><p>所有价格均为界面演示数值，未接入行情授权服务。</p>
-      <table><thead><tr><th>品种</th><th>市场 / 口径</th><th>价格</th><th>单位</th></tr></thead><tbody><tr v-for="price in prices" :key="price.mineral"><td>{{ price.mineral }}</td><td>{{ price.market }}</td><td>{{ price.price }}</td><td>{{ price.unit }}</td></tr></tbody></table>
+    <section v-else-if="view === 'prices'" class="panel table-scroll">
+      <PriceChart :prices="prices" /><h2>行情观测记录</h2><p>金额保留原始精度；不同市场、合约、币种、单位与口径不混为同一序列。</p>
+      <table><thead><tr><th>品种/合约</th><th>市场/口径</th><th>时间</th><th>价格/单位</th></tr></thead><tbody><tr v-for="price in prices" :key="price.id"><td>{{ price.instrument }} {{ price.contract }}</td><td>{{ price.market }} / {{ price.quote_type }}</td><td>{{ price.published_at }}</td><td>{{ price.price }} {{ price.currency }}/{{ price.unit }}</td></tr></tbody></table>
     </section>
     <section v-else-if="view === 'pipeline'" class="panel">
-      <h2>采集 → 清洗 → 去重 → 向量化 → 入库</h2><p>当前为前端演示。采集作业未运行，648 条为示例统计。</p>
-      <table><thead><tr><th>来源</th><th>采集要求</th><th>当前状态</th></tr></thead><tbody><tr><td>新闻</td><td>RSS + 正文抽取</td><td>待接入</td></tr><tr><td>政策</td><td>发布机构 + 政策条款</td><td>待核实近30天文档量</td></tr><tr><td>价格</td><td>品种、日期、数值、单位</td><td>待授权并确认锂价格市场</td></tr></tbody></table>
-      <p>建议主键：来源 + 规范化 URL；价格使用市场 + 品种 + 合约 + 时间 + 口径。内容哈希用于识别重复文档。</p>
+      <div class="panelhead"><h2>采集 → 清洗 → 去重 → 向量化 → 入库</h2><button class="outline" :disabled="acting || overview.job?.status === 'running'" @click="$emit('collect')">{{ overview.job?.status === 'running' ? '采集中…' : '启动采集' }}</button></div>
+      <p>状态：{{ overview.job?.status || 'idle' }} · {{ overview.job?.error || message }}</p>
+      <p>原始记录 {{ overview.coverage?.total_documents || 0 }} 条，向量切片 {{ overview.coverage?.chunks || 0 }} 条。切片不作为新增原始记录计数。</p>
+      <p>近 30 天缺口：新闻 {{ overview.coverage?.deficits?.news ?? 200 }} / 政策 {{ overview.coverage?.deficits?.policy ?? 200 }} / 价格 {{ overview.coverage?.deficits?.price ?? 200 }}。</p>
+      <SourcesPanel :sources="overview.sources" />
+      <h3>最近运行记录</h3><article v-for="run in runs" :key="run.id" class="item"><b>{{ run.status }}</b> · {{ run.started_at }}<ul><li v-for="source in run.report.sources" :key="source.id">{{ source.name }}：{{ source.status }}，新增 {{ source.inserted || 0 }} 条；{{ source.message || source.errors?.[0] }}<details v-if="source.errors?.length || source.excluded"><summary>排除与错误详情</summary><pre>{{ JSON.stringify({ excluded: source.excluded, errors: source.errors }, null, 2) }}</pre></details></li></ul></article><p v-if="!runs.length">尚无采集作业记录。</p>
     </section>
-    <section v-else-if="view === 'eval'" class="panel">
-      <h2>质量评估 · 示例报告</h2><p>下列指标是页面演示值，尚未执行真实检索与问答评估。</p>
-      <table><thead><tr><th>指标</th><th>示例结果</th><th>评估方式</th></tr></thead><tbody><tr><td>Recall@5</td><td>85.0%</td><td>检查前5个结果对标注证据的覆盖</td></tr><tr><td>回答忠实度</td><td>92.5%</td><td>逐项检查回答是否得到证据支持</td></tr><tr><td>标准问答</td><td>20 条（规划）</td><td>接入数据后人工核验并冻结基准</td></tr></tbody></table>
+    <section v-else-if="view === 'eval'" class="panel table-scroll">
+      <div class="panelhead"><h2>检索与回答评估</h2><button class="outline" :disabled="acting" @click="$emit('evaluate')">运行 20 条评估</button></div><p>{{ message }}</p>
+      <template v-if="overview.evaluation"><p>{{ overview.evaluation.corpus }}</p><p>生成时间：{{ overview.evaluation.created_at }} · {{ overview.evaluation.encoder }}</p>
+        <table><thead><tr><th>指标</th><th>结果</th><th>定义</th></tr></thead><tbody><tr><td>Recall@5</td><td>{{ percent(overview.evaluation.recall_at_5) }}</td><td>前五个原始文档覆盖标注证据的比例</td></tr><tr><td>回答忠实度</td><td>{{ percent(overview.evaluation.answer_faithfulness) }}</td><td>抽取式断言在所引用证据中的精确支持率</td></tr><tr><td>标准答案命中</td><td>{{ percent(overview.evaluation.answer_accuracy) }}</td><td>回答是否含预期事实短语</td></tr></tbody></table>
+        <p>当前基准仅覆盖 DISR 历史政策参考摘要，不能代表近期三源泛化效果。抽取式忠实度高不等于回答完整或问题已解决。</p>
+        <article v-for="row in overview.evaluation.results" :key="row.question" class="item"><h3>{{ row.question }}</h3><p>标准答案：{{ row.expected_answer }}</p><small>Recall@5 {{ percent(row.recall_at_5) }} · 引用支持率 {{ percent(row.faithfulness) }}</small></article>
+      </template><p v-else>尚未运行评估。先执行 python -m pipeline bootstrap 初始化历史参考资料。</p>
     </section>
   </section>
 </template>

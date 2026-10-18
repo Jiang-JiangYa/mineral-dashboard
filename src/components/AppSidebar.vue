@@ -1,5 +1,5 @@
 <script setup>
-import { navigation } from '../data/demo.js'
+import { navigation } from '../data/navigation.js'
 defineProps({ active: { type: String, required: true } })
 defineEmits(['navigate', 'settings'])
 </script>
@@ -13,7 +13,7 @@ defineEmits(['navigate', 'settings'])
       <button v-for="item in navigation" :key="item.id" :class="{ active: active === item.id }" :aria-current="active === item.id ? 'page' : undefined" @click="$emit('navigate', item.id)">{{ item.icon }}　{{ item.label }}</button>
     </nav>
     <div class="sidebottom">
-      <div class="health">●　演示环境 <span>DEMO</span></div>
+      <div class="health">●　本地工作台 <span>V0.3</span></div>
       <button @click="$emit('settings')">⚙　接口设置</button>
       <div class="profile"><b>YJ</b><span>我的工作空间<small>矿业研究员</small></span></div>
     </div>

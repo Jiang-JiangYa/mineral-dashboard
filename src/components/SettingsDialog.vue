@@ -25,7 +25,7 @@ defineExpose({ open })
 
 <template>
   <dialog ref="dialog" id="config" aria-labelledby="config-title">
-    <h2 id="config-title">连接问答接口</h2><p>填写支持 POST /query 的服务地址。留空使用演示模式。</p>
+    <h2 id="config-title">连接问答接口</h2><p>填写支持 POST /query 的服务地址。留空连接本项目后端 /api/query。</p>
     <form class="settings-form" @submit.prevent="save">
       <input ref="input" v-model="draft" placeholder="https://your-api.example/query" aria-label="接口地址" :aria-invalid="!!error" @input="error = ''" />
       <p v-if="error" role="alert" class="settings-error">{{ error }}</p>

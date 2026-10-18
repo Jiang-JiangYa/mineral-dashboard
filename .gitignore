@@ -17,6 +17,10 @@ venv/
 .next/
 .turbo/
 coverage/
+/data/
+/data-*/
+eval/results/
+*.egg-info/
 *.tsbuildinfo
 
 # Logs and temporary files
@@ -34,6 +38,8 @@ temp/
 dist/
 site.tar.gz
 vue-preview.png
+backend-preview.png
+backend-preview.jpg
 
 # Local secrets; keep shareable environment templates
 .env
