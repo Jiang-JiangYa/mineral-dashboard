@@ -79,4 +79,4 @@ P0为核心可用条件，P1为核心流程完善后的增强项。
 
 演示地址：https://mineral-dashboard-lss6.onrender.com/
 
-实现说明：README.md；数据定义：DATA_NOTES.md；部署约束：DEPLOYMENT.md。
+实现说明：[README.md](README.md)；数据定义：[DATA_NOTES.md](DATA_NOTES.md)；部署约束：[DEPLOYMENT.md](DEPLOYMENT.md)。

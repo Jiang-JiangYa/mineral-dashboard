@@ -2,6 +2,20 @@
 
 Vue 3 + FastAPI + SQLite/sqlite-vec。支持公开网页采集、授权行情导入、清洗去重、持久化向量检索、带引用的中文问答、采集状态与20条参考问答评估。
 
+[在线演示](https://mineral-dashboard-lss6.onrender.com/) · [产品需求文档（PRD）](PRD.md) · [部署说明](DEPLOYMENT.md) · [数据说明](DATA_NOTES.md)
+
+## 项目概览
+
+面向矿业信息研究场景，将新闻、政策和价格汇集到一个工作台，支持筛选、检索和来源核验。使用 Codex 辅助完成开发与调试，当前定位为学习与求职展示 MVP；目标用户与业务价值仍需通过真实试用验证。
+
+- **前端：**Vue 3 + Vite，展示情报列表、价格、数据状态及查询结果。
+- **后端：**FastAPI 提供查询、数据读取、采集管理和评估接口。
+- **数据：**SQLite + sqlite-vec 保存文档、文本切片、向量和任务记录。
+- **部署：**Docker 多阶段构建，前后端在 Render 同一服务中运行，FastAPI 同时提供网页与 API；无需保持本地电脑开机。
+- **回答方式：**默认采用哈希特征向量结合词项检索，抽取来源片段并返回引用，不依赖大模型 API。
+
+线上演示于2026年10月19日完成部署，Render显示 `Deploy succeeded | Live`。免费环境没有持久磁盘，不能作为长期数据保存方案；详细限制见文末。
+
 **代码链路可本地跑通，但当前不满足“近30天三类各200条”的数据验收。** 实际访问发现：MINING.COM 403，DISR 本机连接超时，中国稀土官网当前栏目文档较旧；S&P RSS 和行情授权接口尚未提供。界面显示实际数量，不用模拟数据补齐。碳酸锂期货属于 GFEX，题目的“SHFE 锂”需确认。
 
 ## 一键启动（Windows PowerShell）
@@ -18,10 +32,10 @@ npm start
 - 后续直接 `npm start`，它重新构建前端并启动 FastAPI。
 - 网页：[http://127.0.0.1:8000](http://127.0.0.1:8000)
 - 交互 API 文档：[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- Ctrl+C 停止服务；数据保存在 `data/`，重启不丢失。
+- Ctrl+C 停止服务；本地数据保存在 `data/`，保留该目录时重启不会丢失；这不适用于 Render 免费容器的临时文件系统。
 - 已有服务占用8000时先停止旧进程；或使用 uvicorn 的 `--port 8001`，同源网页打开对应端口。
 
-本机本次已完成依赖安装与初始化，可直接 `npm start`。默认使用不需模型下载/密钥的哈希向量检索基线和抽取式回答；语义模型选项见后文。
+完成首次初始化后可直接 `npm start`。默认使用不需模型下载/密钥的哈希向量检索基线和抽取式回答；语义模型选项见后文。
 
 ## 开发方式
 
@@ -147,14 +161,37 @@ scripts/         Windows初始化/启动、跨平台Python命令和统一工程�
 config/          行情标准字段模板
 tests/           前端与后端回归测试
 DATA_NOTES.md    schema、主键、去重、来源限制、评估口径
+PRD.md           目标用户、场景、功能优先级与验收计划
+DEPLOYMENT.md    部署配置、环境变量与运行限制
 .env.example     可分享配置，无账号密钥
 ```
 
 `data/`、`.venv/`、`node_modules/`、`dist/`、`.env`、日志和本地AGENTS.md不入Git。保留原Gitee仓库、历史与 `.openai/hosting.json`；原Gitee远端继续保留；另同步GitHub用于Render部署。推送代码不等于完成线上发布。
 
-现有 Sites 是静态托管，不能直接运行Python服务。完整系统当前在本机8000端口提供；若上线，需要另行部署FastAPI及持久磁盘，并为前端配置可访问的HTTPS后端。
-
-
 ## 公开上线
 
-已准备Dockerfile、Compose/Caddy和Render部署模板；当前选择Render免费单实例演示，不挂持久盘；数据会随休眠/重启重置。费用、账户接入、环境变量与上线验收见 [DEPLOYMENT.md](DEPLOYMENT.md)。这些文件已准备不代表已经上线；目前尚未创建云服务或付费，Docker镜像也尚未实际构建。
+当前完整系统已部署到 Render：**[打开矿观](https://mineral-dashboard-lss6.onrender.com/)**。此前的 Sites 站点是独立的静态演示，不作为当前完整系统入口。
+
+```text
+浏览器 → Render HTTPS → FastAPI
+                         ├─ Vue 构建后的网页文件
+                         ├─ /api/* 与 /query
+                         └─ SQLite / sqlite-vec（容器本地数据）
+```
+
+### 运行与管理
+
+- Docker 镜像已由 Render 构建并成功启动；本地没有执行 Docker 构建验证。
+- 普通访问者可浏览和查询，无需管理员密钥；POST采集和执行评估需要 `Authorization: Bearer <MANAGEMENT_TOKEN>`。
+- `MANAGEMENT_TOKEN` 由管理员生成，在 Render 的 Environment 中配置，公开模式要求至少32字符；不要写入前端、提交到仓库或分享给访客。
+- `serve/__main__.py` 读取 Render 注入的端口与域名，监听 `0.0.0.0`；首次空库可初始化历史参考资料，不能视作完成真实数据采集。
+- 更新代码后需在 Render 执行部署才能更新线上服务；当前仓库模板关闭自动部署，实际行为以服务后台设置为准。
+
+### 免费演示限制
+
+- 连续15分钟无访问会休眠，再次访问约需一分钟唤醒。
+- 不挂持久磁盘，休眠、重启或重新部署会丢失运行期间写入本地的数据库、采集记录与评估报告。需要长期保存数据时，应改用持久化方案。
+- 免费实例小时数、流量及构建用量受平台额度限制，不承诺长期服务可用性；规则以 [Render 免费服务说明](https://render.com/docs/free) 为准。
+- 当前来源接入及数据覆盖仍不满足原题验收，线上演示不代表生产级服务。
+
+部署模板、环境变量及其他托管方式见 [DEPLOYMENT.md](DEPLOYMENT.md)。

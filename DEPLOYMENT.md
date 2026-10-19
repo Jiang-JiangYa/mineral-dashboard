@@ -2,7 +2,9 @@
 
 ## 当前状态
 
-部署文件已经准备好，**尚未创建线上服务、没有付费、没有生成新的公开完整系统地址**。本机目前未安装 Docker，容器镜像尚未实际构建；部署前必须以平台构建和运行结果验证，不能把文件准备完成当成部署成功。
+**2026-10-19 已完成 Render 免费服务部署。** 公开地址：[矿观系统](https://mineral-dashboard-lss6.onrender.com/)。Render部署记录显示 `Deploy succeeded | Live`，应用启动完成且首页GET返回200；镜像由Render构建，本地未做Docker构建验证。
+
+已上线的应用代码提交为 `50732bb`；后续文档提交不等于应用已重新部署。线上完整场景验收尚需按下方清单逐项记录，不能仅凭部署成功判断全部业务功能达标。
 
 现有 Sites 仅托管旧静态网页，无法原样运行 FastAPI、sqlite-vec 和本地数据库。新方案把 Vue 构建结果和 Python API 放进同一个 Docker 服务，网页和 `/api` 同源。
 
@@ -33,29 +35,30 @@
 
 默认 hash 编码器适合先做小数据演示。若改为本地多语模型，需要重新评估内存规格与费用，不能把512MB视为模型运行保证。
 
-## Gitee 代码接入
+## GitHub 代码接入与更新
 
-部署前需提交最新文件，并确认平台拉取的是最新commit。用户已指定将本项目同步到GitHub仓库 `https://github.com/Jiang-JiangYa/mineral-dashboard.git`，保留原Gitee远程。
+当前部署源码：[GitHub仓库](https://github.com/Jiang-JiangYa/mineral-dashboard)。本地远程 `github` 指向该地址，原 `origin` 保留Gitee；向一个远程推送不会自动同步另一个远程。
 
-Render可连接Git提供商仓库或公开Git URL。当前项目是Gitee：
-
-1. 若仓库可匿名克隆，可在 Web Service 的 Public Git Repository 中尝试填入现有地址；Render侧是否能正常拉取须实际验证。
-2. 公开URL方式通常不支持自动部署；后续更新手动触发。参见[官方部署说明](https://render.com/docs/deploys)。
-3. 如Gitee仓库私有或平台拉取失败，可经用户授权镜像到其GitHub/GitLab仓库，再连接部署；不要自动创建新远程或公开私有代码。
+1. 在Render通过GitHub连接选择该仓库及 `main` 分支，运行方式选择Docker，套餐选择Free。此前表单拒绝了Gitee地址，不再将直接填写Gitee URL作为本项目已验证路线。
+2. 更新时先检查变更并提交，再执行 `git push github main`。
+3. 需要更新运行中的应用时，在Render选择 `Manual Deploy → Deploy latest commit`，核对部署提交及日志。模板关闭自动部署，实际以服务后台设置为准。参见[官方部署说明](https://render.com/docs/deploys)。
+4. 仅修改Markdown文档通常无需重新部署应用；GitHub上的文档会随推送更新。
 
 `render.yaml` 默认免费、不挂磁盘。只有用户以后明确选择付费升级时，才将plan改为相应付费规格并添加1GB磁盘；上表仅供付费升级参考。
 
 ## 平台环境变量
 
 - `DEPLOYMENT_MODE=public`
-- `DATA_DIR=/app/data`，与持久盘挂载路径一致。
+- `DATA_DIR=/app/data`：免费环境为临时目录；未来挂持久盘时应与挂载路径一致。
 - `EMBEDDING_BACKEND=hash`
 - `BOOTSTRAP_REFERENCE=1`：仅空库初始化10个历史参考摘要和评估，已有数据库不覆盖。
-- `MANAGEMENT_TOKEN`：至少32字符，平台生成并妥善保存，不写到前端或Git。
+- `MANAGEMENT_TOKEN`：至少32字符的随机密钥，妥善保存，不写到前端或Git。Blueprint模板可自动生成；手动创建服务时需在Environment中添加。
 - `PORT`：使用Render注入的端口。
 - Render自动提供 `RENDER_EXTERNAL_HOSTNAME`，入口会据此设置默认Host白名单和HTTPS Origin；绑定自有域名时显式补充 `ALLOWED_HOSTS` 和 `CORS_ORIGINS`。
 
 普通访客可查看已入库数据和提问；采集、运行评估仍需管理员令牌。公开部署会公开数据库中的文档与报告，导入授权行情前先确认它允许对外展示。
+
+手动配置密钥：在本地运行 `python -c "import secrets; print(secrets.token_hex(32))"`，将输出保存到Render服务的 `Environment → Add Environment Variable`，Key填 `MANAGEMENT_TOKEN`，Value填生成值，保存并重新部署。不要把密钥贴到聊天或截图中。首次部署曾因缺少该变量失败，补充后启动成功。
 
 ## 备选：已有云服务器时使用 Docker Compose
 
@@ -75,10 +78,12 @@ docker compose --env-file .env.deploy logs --tail=100 app
 1. 平台构建成功，健康检查通过，打开实际HTTPS地址。
 2. `/api/health` 返回ok；历史战略问题有来源引用，近期无证据问题拒答。
 3. 无令牌POST `/api/collect` 与 `/api/eval` 被拒绝。
-4. 重启/重部署后文档数和评估仍保留，确认持久盘实际可写。
+4. 免费环境确认空库初始化及数据重置行为，提前备份有价值的数据；只有升级持久盘后，才验收重启/重部署后新增文档与评估仍保留。
 5. 用另一台设备或无登录浏览器访问，确认访客能正常浏览。
 6. 核对资源与用量账单；网站公开不等于题目的600条真实数据验收达标。
 
 ## 免费体验的区别
 
-Render免费服务不能挂持久盘，空闲会休眠，重启后的SQLite数据会丢失。若只想短期试看，可以单独创建免费临时演示实例并明确接受这些限制，但不能把它称为已完成持久化上线。当前render.yaml已经采用免费配置；需要持久化时必须另行确认付费升级。
+当前就是免费演示实例，不是持久化上线：15分钟无访问会休眠，唤醒约一分钟；运行期间写入的SQLite等本地文件在休眠、重启或重新部署后丢失。每工作空间每月750个免费实例小时，另有流量与构建额度；规则及超额处理以[官方免费服务说明](https://render.com/docs/free)为准。没有固定30天到期限制的是免费Web Service；免费PostgreSQL的30天到期规则是另一项产品限制，本项目未使用它。
+
+若需要保留真实采集结果，应另行选择持久化存储方案；当前不自动升级或产生付费配置。
