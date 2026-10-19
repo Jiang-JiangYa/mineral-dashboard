@@ -1,0 +1,11 @@
+node_modules/
+.venv/
+.cache/
+dist/
+data/
+data-*/
+.sites-*/
+.openai/
+AGENTS.md
+package-lock.json
+eval/ground_truth.json

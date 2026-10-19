@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -13,19 +13,31 @@
     "test": "vitest run",
     "setup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup.ps1",
     "start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start.ps1",
-    "backend": ".venv\\Scripts\\python.exe -m uvicorn serve.app:app --host 127.0.0.1 --port 8000",
-    "test:backend": ".venv\\Scripts\\python.exe -m pytest tests/backend -q",
-    "collect": ".venv\\Scripts\\python.exe -m pipeline collect",
-    "evaluate": ".venv\\Scripts\\python.exe -m eval.run"
+    "backend": "node scripts/python.mjs -m uvicorn serve.app:create_app --factory --host 127.0.0.1 --port 8000",
+    "test:backend": "node scripts/python.mjs -m pytest",
+    "collect": "node scripts/python.mjs -m pipeline collect",
+    "evaluate": "node scripts/python.mjs -m eval.run",
+    "lint": "eslint src tests/*.js scripts/*.mjs *.js",
+    "lint:backend": "node scripts/python.mjs -m ruff check pipeline serve eval tests/backend",
+    "format": "prettier --write src tests/*.js scripts/*.mjs *.js *.json index.html",
+    "format:check": "prettier --check src tests/*.js scripts/*.mjs *.js *.json index.html",
+    "format:backend": "node scripts/python.mjs -m ruff format pipeline serve eval tests/backend",
+    "format:backend:check": "node scripts/python.mjs -m ruff format --check pipeline serve eval tests/backend",
+    "check": "node scripts/check.mjs"
   },
   "dependencies": {
     "vue": "^3.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/test-utils": "^2.4.6",
+    "eslint": "^10.13.0",
+    "eslint-plugin-vue": "^10.11.1",
+    "globals": "^16.5.0",
     "jsdom": "^26.1.0",
+    "prettier": "^3.9.10",
     "vite": "^7.1.0",
-    "vitest": "^3.2.0"
+    "vitest": "^5.0.5"
   }
 }

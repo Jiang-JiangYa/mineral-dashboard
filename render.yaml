@@ -1,0 +1,21 @@
+# Free demonstration only: local SQLite data resets on restart, deploy or idle spin-down.
+services:
+  - type: web
+    name: mineral-dashboard
+    runtime: docker
+    plan: free
+    region: singapore
+    numInstances: 1
+    healthCheckPath: /api/health
+    autoDeployTrigger: 'off'
+    envVars:
+      - key: MANAGEMENT_TOKEN
+        generateValue: true
+      - key: DEPLOYMENT_MODE
+        value: public
+      - key: EMBEDDING_BACKEND
+        value: hash
+      - key: DATA_DIR
+        value: /app/data
+      - key: BOOTSTRAP_REFERENCE
+        value: '1'

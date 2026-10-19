@@ -1,0 +1,46 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      DEPLOYMENT_MODE: public
+      MANAGEMENT_TOKEN: ${MANAGEMENT_TOKEN:?Set MANAGEMENT_TOKEN in .env.deploy}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?Set ALLOWED_HOSTS in .env.deploy}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      DATA_DIR: /app/data
+      EMBEDDING_BACKEND: hash
+      BOOTSTRAP_REFERENCE: '1'
+      PORT: '8000'
+    ports:
+      - '127.0.0.1:8000:8000'
+    volumes:
+      - mineral_data:/app/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+  proxy:
+    image: caddy:2-alpine
+    profiles: [https]
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  mineral_data:
+  caddy_data:
+  caddy_config:

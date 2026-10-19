@@ -5,7 +5,7 @@ if (-not (Test-Path '.venv/Scripts/python.exe')) {
     python -m venv .venv
     if ($LASTEXITCODE -ne 0) { throw '请先安装 Python 3.11 或以上版本（建议 3.12，64 位）' }
 }
-& .venv/Scripts/python.exe -m pip install -r requirements-lock.txt
+& .venv/Scripts/python.exe -m pip install -r requirements-dev.txt
 if ($LASTEXITCODE -ne 0) { throw 'Python 依赖安装失败，请检查网络' }
 npm ci
 if ($LASTEXITCODE -ne 0) { throw 'npm 依赖安装失败' }

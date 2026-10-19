@@ -36,7 +36,7 @@ npm run dev
 
 开发网页 http://127.0.0.1:5173。问答设置留空时调用本项目 `/api/query`；保留了此前自定义接口地址的 localStorage 兼容，旧地址失效时到「接口设置」清空保存。
 
-Linux/macOS 可手动执行 `python3 -m venv .venv`、激活环境、`pip install -r requirements.txt`、`npm ci`、`python -m pipeline bootstrap`、`python -m eval.run`、`npm run build`、`uvicorn serve.app:app --host 127.0.0.1 --port 8000`。Windows 一键脚本和当前锁文件在本机 Python3.12/Windows64位验证。
+Linux/macOS 可手动执行 `python3 -m venv .venv`、激活环境、`pip install -r requirements-dev.txt`、`npm ci`、`python -m pipeline bootstrap`、`python -m eval.run`、`npm run build`、`uvicorn serve.app:create_app --factory --host 127.0.0.1 --port 8000`。Windows 一键脚本和当前锁文件在本机 Python3.12/Windows64位验证。
 
 ## 采集与导入
 
@@ -120,6 +120,8 @@ DATA_DIR=data-semantic
 ## 自动评估和测试
 
 ```powershell
+npm run check   # 静态检查、格式检查、前后端测试和构建
+# 或分别执行：
 npm test
 npm run test:backend
 npm run evaluate
@@ -132,6 +134,8 @@ npm run build
 - 忠实度采用抽取断言的原文精确支持率；不是独立LLM裁判。小参考集高分不能证明近期三源效果。详见数据说明。
 - 测试数据仅在临时目录/前端mock中，绝不导入正式数据库充数。
 
+工程约定与开发依赖说明见 [CONTRIBUTING.md](CONTRIBUTING.md)。生产环境仅需 `requirements-lock.txt`；pytest 和 Ruff 放在 `requirements-dev.txt`。后端使用应用工厂，普通模块导入不会创建数据库。
+
 ## 目录
 
 ```text
@@ -139,13 +143,18 @@ pipeline/        模型、HTTP/RSS/HTML/行情采集、清洗、去重、向量�
 serve/           FastAPI、自然语言过滤、混合检索、引用回答
 eval/           20条金标准、历史参考摘要、自动评估
 src/             Vue3页面与真实API联调
-scripts/         Windows初始化/启动
+scripts/         Windows初始化/启动、跨平台Python命令和统一工程检查
 config/          行情标准字段模板
 tests/           前端与后端回归测试
 DATA_NOTES.md    schema、主键、去重、来源限制、评估口径
 .env.example     可分享配置，无账号密钥
 ```
 
-`data/`、`.venv/`、`node_modules/`、`dist/`、`.env`、日志和本地AGENTS.md不入Git。保留原Gitee仓库、历史与 `.openai/hosting.json`；本次不自动推送或更新线上站点。
+`data/`、`.venv/`、`node_modules/`、`dist/`、`.env`、日志和本地AGENTS.md不入Git。保留原Gitee仓库、历史与 `.openai/hosting.json`；原Gitee远端继续保留；另同步GitHub用于Render部署。推送代码不等于完成线上发布。
 
 现有 Sites 是静态托管，不能直接运行Python服务。完整系统当前在本机8000端口提供；若上线，需要另行部署FastAPI及持久磁盘，并为前端配置可访问的HTTPS后端。
+
+
+## 公开上线
+
+已准备Dockerfile、Compose/Caddy和Render部署模板；当前选择Render免费单实例演示，不挂持久盘；数据会随休眠/重启重置。费用、账户接入、环境变量与上线验收见 [DEPLOYMENT.md](DEPLOYMENT.md)。这些文件已准备不代表已经上线；目前尚未创建云服务或付费，Docker镜像也尚未实际构建。
